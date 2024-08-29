@@ -1,0 +1,59 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <?php 
+                
+                $products = get_field('producto_variable');
+                if( $products ) {
+                    $images = get_sub_field('imagenes');
+                    foreach( $products as $product_variation ):
+                        global $post;
+                        global $woocommerce;
+                        $variation = $product_variation['producto'];
+                        $title = $variation->post_title;
+                        $variation_id = $variation->ID;
+                        $variation_image = get_the_post_thumbnail($variation_id);
+
+                        $args = array(
+                            'post_type'  => 'product_variation',
+                            'p' => $variation_id
+                            
+                        );
+                        $variations = get_posts( $args);
+                        $parent_product_id = $variations[0]->post_parent;
+                        // wp_reset_query(); 
+                        $test = $variations[0];
+                        $product = new WC_product($parent_product_id);
+                        $attachment_ids = $product->get_gallery_image_ids();
+                        
+                        
+                        foreach( $attachment_ids as $attachment_id ) :
+                            
+                            // Display the image URL
+                            $Original_image_url = wp_get_attachment_url( $attachment_id );
+
+                            // Display Image instead of URL
+                            //echo wp_get_attachment_image($attachment_id, 'full');
+                        ?>
+                        <img src="<?php //echo $Original_image_url;?>" alt="" srcset="">
+                        <?php endforeach;?>
+                        <?php
+                        
+                        ?>
+                        <div class="title">
+                            <?php echo $variation->post_title;?>
+                            <?php echo $featured_image_url;?>
+                            <br>
+                            <?php  echo do_shortcode('[add_to_cart id="'.$variation->ID.'"]'); ?>
+                        </div>
+                        <pre>
+                        
+                        <?php var_dump($images);?>
+
+                        </pre>
+                    <?php endforeach;
+                }
+            ?>
+        </div>
+    </div>
+</div>
